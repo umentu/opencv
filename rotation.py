@@ -6,7 +6,7 @@ import numpy as np
 if __name__ == '__main__':
 
     # 画像読み込み
-    img_src = cv2.imread("./image/slack_botter.png", 0)
+    img_src = cv2.imread("./image/slack_botter.png", 1)
 
     # 画像の中心位置
     # 今回は画像サイズの中心をとっている

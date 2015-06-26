@@ -16,11 +16,11 @@ if __name__ == '__main__':
     # x軸方向に平行移動させたい距離
     move_x = 0
     # y軸方向に平行移動させたい距離
-    move_y = img_src.shape[0] * -0.5
+    move_y = 0
 
     matrix = [
-                [np.cos(rad),  -1 * np.sin(rad), move_x],
-                [np.sin(rad),   np.cos(rad), move_y]
+                [1,  np.tan(rad), move_x],
+                [0,   1, move_y]
             ]
 
     affine_matrix = np.float32(matrix)
