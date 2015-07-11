@@ -109,6 +109,57 @@ class Face(object):
 
         return img_opencv
 
+
+    def get_edge_faces(self, image, min_size=(100, 100), ratio=20):
+        """
+        顔をモザイクで覆うメソッド。
+        image: cv2.imreadで読み取った変数
+        min_size: 顔判定する最小サイズの指定。
+        """
+
+        # イメージをpillowで扱うことのできる形式に変換しておく。
+        img_edit = Image.fromarray(image)
+
+        # 顔認識
+        faces = self.get_faces(image, min_size)
+
+        # 顔があった場合。
+        if len(faces) > 0:
+
+            # 複数の顔があった場合、１つずつ四角で囲っていく。
+            for face in faces:
+
+                # 顔の部分の左上のx,y座標(微調整)
+                face_x = face[0] - 50
+                face_y = face[1] - 100
+                # 顔の部分の横の長さと縦の長さ(微調整)
+                face_width = face[0]+face[2] + 50
+                face_height = face[1]+face[3] + 100
+
+                # 顔を切り抜く
+                cut_face = img_edit.crop((face_x,
+                                          face_y,
+                                          face_width,
+                                          face_height))
+
+                cut_face = np.asarray(cut_face)
+
+                # 2次微分オペレータを使って画像のエッジを検出
+                img_tmp = cv2.Laplacian(cut_face, cv2.CV_32F, 8)
+                cut_face = cv2.convertScaleAbs(img_tmp)
+
+               # イメージをpillowで扱うことのできる形式に変換しておく。
+                cut_face = Image.fromarray(cut_face)
+
+                # 元の画像に加工した顔画像を貼り付ける。
+                img_edit.paste(cut_face, tuple((face_x, face_y)))
+
+        
+        #pillow用のデータをOpenCVデータに変換
+        img_opencv = np.asarray(img_edit)
+
+        return img_opencv
+
 if __name__ == '__main__':
     
     face = Face()
@@ -132,10 +183,12 @@ if __name__ == '__main__':
         ret, frame = cap.read()
 
         # モザイク処理
-        frame = face.get_mosaic_faces(frame, ratio=40)
+        # frame = face.get_mosaic_faces(frame, ratio=40)
+        # cv2.imshow('MOSAIC FACE', frame)
 
-        # 表示
-        cv2.imshow('MOSAIC FACE', frame)
+        # エッジ
+        frame = face.get_edge_faces(frame, ratio=40)
+        cv2.imshow('EDGE FACE', frame)
 
         # qを押したら終了。
         k = cv2.waitKey(1)
