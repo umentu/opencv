@@ -155,6 +155,10 @@ class Face(object):
                 # 元の画像に加工した顔画像を貼り付ける。
                 img_edit.paste(cut_face, tuple((face_x, face_y)))
 
+        #pillow用のデータをOpenCVデータに変換
+        img_opencv = np.asarray(img_edit)
+
+        return img_opencv
 
     def get_negaposi_faces(self, image, min_size=(100, 100)):
         """
@@ -281,16 +285,16 @@ if __name__ == '__main__':
         # cv2.imshow('MOSAIC FACE', frame)
 
         # エッジ
-        # frame = face.get_edge_faces(frame)
-        # cv2.imshow('EDGE FACE', frame)
+        frame = face.get_edge_faces(frame)
+        cv2.imshow('EDGE FACE', frame)
 
         # ネガポジ変換
         # frame = face.get_negaposi_faces(frame)
         # cv2.imshow("NEGAPOSI FACE", frame)
 
         # 笑い男
-        frame = face.get_smileman_faces(frame)
-        cv2.imshow("SMILEMAN FACE", frame)
+        # frame = face.get_smileman_faces(frame)
+        # cv2.imshow("SMILEMAN FACE", frame)
 
 
         # qを押したら終了。
